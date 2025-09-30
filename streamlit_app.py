@@ -54,18 +54,13 @@ for i, goal in enumerate(goals):
 if goals and all(goal for goal in goals) and all(completed) and len(completed) == 3:
 	st.success("🎉 모든 목표를 달성했어요! 사실 선물은 없습니다. 진정한 선물은 바로 당신입니다. 👏")
 
-import pyperclip
 
 # --- 하단: 친구에게 공유하기 버튼 ---
 st.markdown("---")
 st.subheader("열정있는 매일을 이 어플과 함께하세요! 친구에게 공유하기")
 share_url = "https://share.streamlit.io/jayjeong22/jaehee-practice/main/streamlit_app.py"
-if st.button("친구에게 공유할 링크 복사하기"):
-	try:
-		pyperclip.copy(share_url)
-		st.success("링크가 복사되었습니다! 친구에게 바로 공유해보세요.")
-	except Exception:
-		st.info(f"아래 링크를 복사해 친구에게 공유하세요: {share_url}")
+st.code(share_url, language=None)
+st.info("위 링크를 복사해 친구에게 공유하세요!")
 
 # --- 하단: 개발자에게 칭찬의 한 마디 남기기 ---
 import os
