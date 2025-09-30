@@ -1,94 +1,68 @@
-
 import streamlit as st
-
-st.title("Streamlit 주요 요소 예시")  # 페이지 제목
-st.caption("이 페이지는 Streamlit에서 사용할 수 있는 모든 주요 UI 요소의 예시를 보여줍니다.")  # 페이지 설명
-
-# 텍스트 관련 요소
-st.header("텍스트 요소")  # 헤더
-st.subheader("서브헤더 예시")  # 서브헤더
-st.text("일반 텍스트 예시")  # 일반 텍스트
-st.markdown("**마크다운 텍스트** _예시_ [링크](https://streamlit.io)")  # 마크다운
-st.code("print('Hello, Streamlit!')", language='python')  # 코드 블록
-st.latex(r"E = mc^2")  # LaTeX 수식
-st.caption("각주: 다양한 텍스트 및 마크다운 표현")
-
-# 입력 위젯
-st.header("입력 위젯")
-name = st.text_input("이름을 입력하세요")  # 텍스트 입력
-age = st.number_input("나이 입력", min_value=0, max_value=120)  # 숫자 입력
-agree = st.checkbox("동의합니다")  # 체크박스
-color = st.radio("좋아하는 색상은?", ["빨강", "파랑", "초록"])  # 라디오 버튼
-option = st.selectbox("선택하세요", ["A", "B", "C"])  # 셀렉트박스
-multi = st.multiselect("복수 선택", ["X", "Y", "Z"])  # 멀티셀렉트
-date = st.date_input("날짜 선택")  # 날짜 입력
-time = st.time_input("시간 선택")  # 시간 입력
-file = st.file_uploader("파일 업로드")  # 파일 업로더
-st.caption("각주: 다양한 입력 위젯")
-
-# 버튼 및 상호작용
-st.header("버튼 및 상호작용")
-if st.button("버튼 클릭"):
-    st.success("버튼이 클릭되었습니다!")
-st.caption("각주: 버튼 클릭 시 동작 예시")
-
-# 슬라이더
-st.header("슬라이더")
-slider_val = st.slider("값을 선택하세요", 0, 100, 50)
-st.caption("각주: 슬라이더로 값 선택")
-
-# 미디어 요소
-st.header("미디어 요소")
-st.image("https://static.streamlit.io/examples/dog.jpg", caption="강아지 이미지")  # 이미지
-st.audio(
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    format="audio/mp3"
-)  # 오디오
-st.video(
-    "https://www.w3schools.com/html/mov_bbb.mp4"
-)  # 비디오
-st.caption("각주: 이미지, 오디오, 비디오 등 미디어 요소")
-
-# 데이터 표시
-st.header("데이터 표시")
 import pandas as pd
-df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
-st.dataframe(df)  # 데이터프레임
-st.table(df)  # 테이블
-st.json({"key": "value", "number": 123})  # JSON
-st.caption("각주: 데이터프레임, 테이블, JSON 표시")
-
-# 차트
-st.header("차트 예시")
 import numpy as np
-chart_data = pd.DataFrame(
-    np.random.randn(20, 3),
-    columns=["a", "b", "c"]
-)
-st.line_chart(chart_data)  # 라인 차트
-st.bar_chart(chart_data)  # 바 차트
-st.area_chart(chart_data)  # 영역 차트
-st.caption("각주: 기본 차트 예시")
+import matplotlib.pyplot as plt
 
-# 상태 표시
-st.header("상태 표시")
-st.success("성공 메시지 예시")
-st.info("정보 메시지 예시")
-st.warning("경고 메시지 예시")
-st.error("에러 메시지 예시")
-st.caption("각주: 다양한 상태 메시지")
+st.title("성적 데이터 시각화 앱")
+st.write("CSV 파일을 업로드하고 다양한 그래프를 그릴 수 있습니다.")
 
-# 진행률 표시
-st.header("진행률 표시")
-import time
-progress = st.progress(0)
-for i in range(1, 101, 20):
-    time.sleep(0.05)
-    progress.progress(i)
-st.caption("각주: 진행률 바 예시")
+# 1. CSV 파일 업로드
+uploaded_file = st.file_uploader("성적 데이터 CSV 파일 업로드", type=["csv"])
+df = None
+if uploaded_file:
+	df = pd.read_csv(uploaded_file)
+	st.success("데이터 업로드 완료!")
+	st.dataframe(df)
 
-# 사이드바
-st.sidebar.title("사이드바 예시")
-st.sidebar.write("여기는 사이드바입니다.")
-st.sidebar.button("사이드바 버튼")
-st.caption("각주: 사이드바 활용")
+	# 2. 그래프 옵션 선택
+	st.subheader("그래프 유형 선택")
+	graph_type = st.radio(
+		"원하는 그래프를 선택하세요",
+		("히스토그램", "막대그래프", "산점도", "상자그림")
+	)
+
+	# 3. 변수 선택 및 맞춤형 그래프
+	if graph_type == "히스토그램":
+		num_cols = df.select_dtypes(include='number').columns.tolist()
+		col = st.selectbox("히스토그램을 그릴 변수 선택", num_cols)
+		if col:
+			st.write(f"{col}의 히스토그램")
+			fig, ax = plt.subplots()
+			ax.hist(df[col].dropna(), bins=20, color='skyblue', edgecolor='black')
+			ax.set_xlabel(col)
+			ax.set_ylabel("빈도")
+			st.pyplot(fig)
+	elif graph_type == "막대그래프":
+		cat_cols = df.select_dtypes(include='object').columns.tolist()
+		num_cols = df.select_dtypes(include='number').columns.tolist()
+		cat_col = st.selectbox("막대그래프의 범주형 변수 선택", cat_cols)
+		num_col = st.selectbox("막대그래프의 수치형 변수 선택", num_cols)
+		if cat_col and num_col:
+			st.write(f"{cat_col}별 {num_col}의 평균 막대그래프")
+			means = df.groupby(cat_col)[num_col].mean()
+			fig, ax = plt.subplots()
+			ax.bar(means.index.astype(str), means.values, color='orange')
+			ax.set_xlabel(cat_col)
+			ax.set_ylabel(f"{num_col} 평균")
+			st.pyplot(fig)
+	elif graph_type == "산점도":
+		num_cols = df.select_dtypes(include='number').columns.tolist()
+		x_col = st.selectbox("X축 변수 선택", num_cols)
+		y_col = st.selectbox("Y축 변수 선택", num_cols, index=1 if len(num_cols)>1 else 0)
+		if x_col and y_col:
+			st.write(f"{x_col} vs {y_col} 산점도")
+			fig, ax = plt.subplots()
+			ax.scatter(df[x_col], df[y_col], alpha=0.7)
+			ax.set_xlabel(x_col)
+			ax.set_ylabel(y_col)
+			st.pyplot(fig)
+	elif graph_type == "상자그림":
+		num_cols = df.select_dtypes(include='number').columns.tolist()
+		col = st.selectbox("상자그림을 그릴 변수 선택", num_cols)
+		if col:
+			st.write(f"{col}의 상자그림")
+			fig, ax = plt.subplots()
+			ax.boxplot(df[col].dropna())
+			ax.set_xlabel(col)
+			st.pyplot(fig)
+
