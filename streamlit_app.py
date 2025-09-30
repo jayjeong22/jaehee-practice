@@ -57,7 +57,7 @@ if goals and all(goal for goal in goals) and all(completed) and len(completed) =
 
 # --- 하단: 친구에게 공유하기 버튼 ---
 st.markdown("---")
-st.subheader("열정있는 매일을 이 어플과 함께하세요! 친구에게 공유하기")
+st.subheader("열정있는 매일을 이 어플과 함께하세요! 친구에게 공유하기🔗")
 share_url = "https://share.streamlit.io/jayjeong22/jaehee-practice/main/streamlit_app.py"
 st.code(share_url, language=None)
 st.info("위 링크를 복사해 친구에게 공유하세요!")
@@ -65,15 +65,23 @@ st.info("위 링크를 복사해 친구에게 공유하세요!")
 # --- 하단: 개발자에게 칭찬의 한 마디 남기기 ---
 import os
 st.markdown("---")
-st.subheader("개발자에게 칭찬의 한 마디 남기기")
+st.subheader("개발자에게 칭찬의 한 마디 남기기💌")
+
+# 칭찬 메시지 작성 폼
 with st.form("praise_form"):
 	praise_msg = st.text_area("개발자가 코딩을 계속 할 수 있도록 용기를 주세요 :)", max_chars=200)
 	submitted = st.form_submit_button("메시지 남기기")
-	if submitted and praise_msg.strip():
-		# 메시지를 파일에 저장
+
+if submitted and praise_msg.strip():
+	# 이름 입력 화면
+	st.markdown("---")
+	st.subheader("당신은 누구신가요?")
+	user_name = st.text_input("이름을 입력해 주세요", key="user_name")
+	name_submit = st.button("칭찬 메시지 제출하기")
+	if name_submit and user_name.strip():
 		praise_file = "dev_praise.txt"
 		with open(praise_file, "a", encoding="utf-8") as f:
-			f.write(praise_msg.strip() + "\n")
+			f.write(f"[{user_name.strip()}] {praise_msg.strip()}\n")
 		st.success("칭찬 메시지가 개발자에게 전달되었습니다! 감사합니다 😊")
 
 
